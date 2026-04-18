@@ -26,6 +26,8 @@ def get_transcript(vid):
         params={"videoId": vid, "text": True},
         headers={"x-api-key": SUPADATA_API_KEY}
     )
+    print("Status:", response.status_code)
+    print("Response:", response.json())
     data = response.json()
     return data.get("content", "")
 
