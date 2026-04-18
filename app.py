@@ -19,7 +19,6 @@ st.markdown("""
     .user-msg { border-left: 4px solid #cc0000; }
     .bot-msg { border-left: 4px solid #000; }
     p, label, div { color: #000000 !important; }
-
     .stButton > button {
         background-color: #cc0000 !important;
         color: white !important;
@@ -30,7 +29,6 @@ st.markdown("""
         background-color: #aa0000 !important;
         color: white !important;
     }
-
     [data-testid="stSidebar"] {
         background-color: #1a1a1a !important;
     }
@@ -99,7 +97,7 @@ if st.session_state.show_notes:
             existing_notes = f.read()
         if existing_notes.strip():
             st.markdown("**Saved Notes:**")
-            st.text_area("", value=existing_notes, height=200, disabled=True, key="saved_notes")
+            st.text_area("Saved notes", value=existing_notes, height=200, disabled=True, key="saved_notes", label_visibility="collapsed")
             if st.button("Clear All Notes"):
                 os.remove("notes.txt")
                 st.success("Notes cleared!")
