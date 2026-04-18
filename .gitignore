@@ -1,1 +1,5 @@
 .env
+__pycache__
+rag_chroma_db
+youtube_transcripts.txt
+notes.txt
