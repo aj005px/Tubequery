@@ -1,7 +1,7 @@
 import requests
 from dotenv import load_dotenv
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import TextLoader
 from langchain_groq import ChatGroq
@@ -12,7 +12,6 @@ from urllib.parse import urlparse, parse_qs
 import os
 
 load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 SUPADATA_API_KEY = os.getenv("SUPADATA_API_KEY")
 
@@ -44,7 +43,7 @@ def process_video(vid, transcript):
     splits = splitter.split_documents(documents)
 
     #Adding chunks to ChromaDB
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001", google_api_key=GEMINI_API_KEY)
+    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     vector_store = Chroma.from_documents(documents=splits, embedding=embeddings, collection_name="ipl_docs")
 
     #retriver
