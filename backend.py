@@ -35,7 +35,7 @@ def process_video(vid, transcript):
     #Adding yt video id to a document for RAG
     with open("youtube_transcripts.txt", "w", encoding="utf-8") as f:
         f.write(f"VIDEO ID: {vid}\n\n")
-        f.write(transcript)
+        f.write(str(transcript))
 
     #Adding chunks
     loader = TextLoader("youtube_transcripts.txt", encoding="utf-8")
