@@ -1,5 +1,4 @@
-from youtube_transcript_api import YouTubeTranscriptApi
-from urllib.parse import urlparse, parse_qs
+import requests
 from dotenv import load_dotenv
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -9,41 +8,32 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
+from urllib.parse import urlparse, parse_qs
 import os
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+SUPADATA_API_KEY = os.getenv("SUPADATA_API_KEY")
 
 def get_vid_id(url):
     parsed = urlparse(url)
     return parse_qs(parsed.query).get("v", [None])[0] #getting Vid id for transcript
 
 def get_transcript(vid):
-    api = YouTubeTranscriptApi()
-    transcript_list = api.list(vid)
-    try:
-        transcript = transcript_list.find_transcript(["en"])
-    except:
-        try:
-            transcript = transcript_list.find_generated_transcript(
-                [t.language_code for t in transcript_list]
-            )
-            transcript = transcript.translate("en")
-        except:
-            transcript = transcript_list.find_generated_transcript(
-                [t.language_code for t in transcript_list]
-            )
-    return transcript.fetch()
+    response = requests.get(
+        "https://api.supadata.ai/v1/youtube/transcript",
+        params={"videoId": vid, "text": True},
+        headers={"x-api-key": SUPADATA_API_KEY}
+    )
+    data = response.json()
+    return data.get("content", "")
 
 def process_video(vid, transcript):
-    texts = [line.text for line in transcript]
-    vid_joined = " ".join(texts)
-
     #Adding yt video id to a document for RAG
     with open("youtube_transcripts.txt", "w", encoding="utf-8") as f:
         f.write(f"VIDEO ID: {vid}\n\n")
-        f.write(vid_joined)
+        f.write(transcript)
 
     #Adding chunks
     loader = TextLoader("youtube_transcripts.txt", encoding="utf-8")

@@ -56,11 +56,13 @@ if url_input:
     vid = get_vid_id(url_input)
     if vid:
         if st.button("Analyze Video"):
-            with st.spinner("Analyzing transcript..."):
+            with st.spinner("Fetching transcript and building RAG..."):
                 transcript = get_transcript(vid)
                 if transcript:
                     st.session_state.qa_chain = process_video(vid, transcript)
                     st.success("Video Processed! Ask the AI anything.")
+                else:
+                    st.error("Could not fetch transcript. Try another video.")
     else:
         st.error("Invalid YouTube URL.")
 
